@@ -19,4 +19,5 @@ public interface RatingService {
     List<Rating> getAllRatingByHotelId(String hotelId);
 
 
+    void delete(String ratingId);
 }

@@ -32,4 +32,10 @@ public class RatingController {
     public ResponseEntity<List<Rating>> getAllRatingByHotelId(@PathVariable String hotelId){
         return ResponseEntity.ok(ratingService.getAllRatingByHotelId(hotelId));
     }
+
+    // Myself Created Delete Mapping
+    @DeleteMapping("/{ratingId}")
+    public void deleteRating(@PathVariable String ratingId){
+         ratingService.delete(ratingId);
+    }
 }

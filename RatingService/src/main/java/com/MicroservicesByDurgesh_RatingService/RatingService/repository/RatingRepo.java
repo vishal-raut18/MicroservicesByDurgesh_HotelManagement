@@ -10,4 +10,6 @@ import java.util.List;
 public interface RatingRepo extends JpaRepository<Rating,String> {
     List<Rating> findByUserId(String userid);
     List<Rating> findByHotelId(String hotelId);
+
+   // void delete(String ratingId);
 }

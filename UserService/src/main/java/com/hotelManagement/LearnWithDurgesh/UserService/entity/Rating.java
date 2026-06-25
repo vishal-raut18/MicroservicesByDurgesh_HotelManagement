@@ -10,6 +10,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Rating {
     private String  ratingId;
     private  String userId;
