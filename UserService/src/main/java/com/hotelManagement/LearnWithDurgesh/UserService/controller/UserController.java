@@ -5,6 +5,7 @@ import com.hotelManagement.LearnWithDurgesh.UserService.entity.User;
 import com.hotelManagement.LearnWithDurgesh.UserService.services.UserServices;
 import com.hotelManagement.LearnWithDurgesh.UserService.services.imp.UserServiceImpl;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,10 +38,14 @@ public class UserController {
         return ResponseEntity.ok(allUser);
     }
 
+    int retryCount=0;
     // get user by id
     @GetMapping("/{userId}")
-    @CircuitBreaker(name = "ratingHotelBreaker", fallbackMethod = "ratingHotelFallback")
+   // @CircuitBreaker(name = "ratingHotelBreaker", fallbackMethod = "ratingHotelFallback")
+    @Retry(name="ratingHotelService" ,fallbackMethod = "ratingHotelFallback")
     public ResponseEntity<User> getUserById(@PathVariable String userId) {
+        logger.info("Retry Count: "+ retryCount);
+        retryCount++;
         User user1 = userService.getUser(userId);
         return ResponseEntity.status(HttpStatus.OK).body(user1);
     }
