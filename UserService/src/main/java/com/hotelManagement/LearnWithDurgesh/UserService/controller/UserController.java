@@ -5,6 +5,7 @@ import com.hotelManagement.LearnWithDurgesh.UserService.entity.User;
 import com.hotelManagement.LearnWithDurgesh.UserService.services.UserServices;
 import com.hotelManagement.LearnWithDurgesh.UserService.services.imp.UserServiceImpl;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.github.resilience4j.retry.annotation.Retry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,10 +43,12 @@ public class UserController {
     // get user by id
     @GetMapping("/{userId}")
    // @CircuitBreaker(name = "ratingHotelBreaker", fallbackMethod = "ratingHotelFallback")
-    @Retry(name="ratingHotelService" ,fallbackMethod = "ratingHotelFallback")
+  //  @Retry(name="ratingHotelService" ,fallbackMethod = "ratingHotelFallback")
+    @RateLimiter(name="userLateLimiter",fallbackMethod = "ratingHotelFallback")
     public ResponseEntity<User> getUserById(@PathVariable String userId) {
         logger.info("Retry Count: "+ retryCount);
         retryCount++;
+        logger.info("Inside getUserById");
         User user1 = userService.getUser(userId);
         return ResponseEntity.status(HttpStatus.OK).body(user1);
     }
@@ -53,7 +56,7 @@ public class UserController {
     public ResponseEntity<User> ratingHotelFallback(String userId, Exception ex) {
 
         logger.info("Fallback is executed becouse service is down : " + ex.getMessage());
-
+        logger.info("Rate limiter fallback called");
         User  user = User.builder()
                 .email("dummy@gmail.com")
                 .name("Dummy")
